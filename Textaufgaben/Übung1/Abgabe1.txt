@@ -1,0 +1,3 @@
+Zustandsmenge:  Alle Zustände wie die Kisten und der Spieler auf dem Feld angeordnet sein können.
+Aktionen:       Spieler bewegt sich auf ein freies Feld oder ein Kisten-Feld (wenn hinter der Kiste das Feld frei ist), wobei die Kiste auf das dahinter liegende Feld geschoben wird.
+Zielzustände:   Alle Kisten sind auf den markierten Feldern und der Spieler auf einem beliebigen Feld
