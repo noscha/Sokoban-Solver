@@ -1,3 +1,6 @@
+import numpy as np
+
+
 class Coordinate:
 
     def __init__(self, t):
@@ -6,6 +9,12 @@ class Coordinate:
 
     def switch(self):
         return Coordinate(self.coordinate[::-1])
+
+    def d_euclidean(self, other):
+        return np.linalg.norm(np.array(self.coordinate) - np.array(other.coordinate))
+
+    def d_manhattan(self, other):
+        return np.linalg.norm(np.array(self.coordinate) - np.array(other.coordinate), ord=1)
 
     def __mul__(self, other):
         return Coordinate(tuple([other * x for x in self.coordinate]))

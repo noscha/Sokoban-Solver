@@ -18,6 +18,6 @@ def mapping(c):
 
 
 class Mode(Enum):
-    BFS = 0
+    BFS = 0  # Mode.BFS -> 0
     DFS = 1
-    IDFS = 3
+    IDFS = 2

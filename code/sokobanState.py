@@ -4,7 +4,7 @@ import constants as const
 class SokobanState:
     """ Class for sokoban states """
 
-    def __init__(self, position_marking, position_border, position_player, position_boxes, action='s'):
+    def __init__(self, position_marking, position_border, position_player, position_boxes, action='s'):  # TODO markings
         self.position_marking = position_marking
         self.position_border = position_border
         self.position_player = position_player
@@ -40,7 +40,7 @@ class SokobanState:
         """ Checks if state is goal"""
         return set(self.position_boxes) == set(self.position_marking)
 
-    def is_trivial_deadlock(self):
+    def is_trivial_deadlock(self):  # TODO aufruf bei box veschiebung und nur für diese kiste
         """ Detects deadlock wich depend one one box"""
         sum = const.ZERO
         border_count = 0
@@ -87,3 +87,9 @@ class SokobanState:
 
     def __hash__(self):
         return hash((self.position_player, self.position_boxes))
+
+    def __lt__(self, other):
+        return id(self) < id(other)
+
+    def __le__(self, other):
+        return id(self) <= id(other)
