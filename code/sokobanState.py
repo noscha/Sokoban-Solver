@@ -4,8 +4,8 @@ import constants as const
 class SokobanState:
     """ Class for sokoban states """
 
-    def __init__(self, position_marking, position_border, position_player, position_boxes, action='s'):  # TODO markings
-        self.position_marking = position_marking
+    def __init__(self, position_markings, position_border, position_player, position_boxes, action='s'):
+        self.position_markings = position_markings
         self.position_border = position_border
         self.position_player = position_player
         self.position_boxes = position_boxes
@@ -15,12 +15,12 @@ class SokobanState:
         """ returns possible successor states """
         res = []
         for i in const.STATES:
-            if self.is_trivial_deadlock():
+            if self.action.isupper() and self.is_trivial_deadlock():  # only when box moved
                 continue
             # step with no box in front
             elif self.position_player + i not in self.position_border.union(self.position_boxes):
 
-                res.append(SokobanState(self.position_marking, self.position_border,
+                res.append(SokobanState(self.position_markings, self.position_border,
                                         self.position_player + i, self.position_boxes,
                                         const.mapping(i)))
             # step with box in front
@@ -31,16 +31,16 @@ class SokobanState:
                 temp.remove(self.position_player + i)
                 temp.add(self.position_player + (i * 2))
 
-                res.append(SokobanState(self.position_marking, self.position_border,
+                res.append(SokobanState(self.position_markings, self.position_border,
                                         self.position_player + i, frozenset(temp),
                                         (const.mapping(i)).upper()))
         return res
 
     def is_goal(self):
         """ Checks if state is goal"""
-        return set(self.position_boxes) == set(self.position_marking)
+        return set(self.position_boxes) == set(self.position_markings)
 
-    def is_trivial_deadlock(self):  # TODO aufruf bei box veschiebung und nur für diese kiste
+    def is_trivial_deadlock(self):
         """ Detects deadlock wich depend one one box"""
         sum = const.ZERO
         border_count = 0
@@ -49,20 +49,20 @@ class SokobanState:
                 if b + i in self.position_border:
                     sum += i
                     border_count += 1
-            # no border or a path
+            # path or no border
             if sum == const.ZERO:
                 continue
 
             # in corner
             elif border_count > 2:
-                return not (b in self.position_marking)
+                return not (b in self.position_markings)
 
             # on border
             else:  #TODO make better
                 no_marking = True
                 i = b
                 while i not in self.position_border:
-                    if i in self.position_marking:
+                    if i in self.position_markings:
                         no_marking = False
                         break
                     i += sum.switch()
@@ -70,7 +70,7 @@ class SokobanState:
                     break
                 i = b
                 while i not in self.position_border:
-                    if i in self.position_marking:
+                    if i in self.position_markings:
                         no_marking = False
                         break
                     i += (sum.switch() * -1)

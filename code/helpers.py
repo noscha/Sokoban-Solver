@@ -1,5 +1,6 @@
 from sokobanState import *
 from coordinate import *
+import scipy.optimize
 
 
 def parse_level(input):
@@ -46,28 +47,50 @@ def backtrace(parent, start, end):
 
 
 def euclidean(state):
+    """ Calculate smallest euclidean distance between box and marking """
     res = 0
     for b in state.position_boxes:
         temp = []
-        for m in state.position_marking:
+        for m in state.position_markings:
             temp.append(b.d_euclidean(m))
         res += min(temp)
     return res
 
 
 def manhattan(state):
+    """ Calculate the smallest manhattan distance between box and marking """
     res = 0
     for b in state.position_boxes:
         temp = []
-        for m in state.position_marking:
+        for m in state.position_markings:
             temp.append(b.d_manhattan(m))
         res += min(temp)
     return res
 
 
-def pattern_db():
-    pass
+def pattern_db(state): # TODO ist jedes mal neu rechen klug?
+    """ flood to all markings; here stop if marking reached """
+    temp = []
+    for b in state.position_boxes:
+        queue = [b]
+        visited = set()
+        depth = {b: 0}
+        not_found = True
+        while not_found:
+            pos = queue.pop(0)
+            visited.add(pos)
+            for i in const.STATES:
+                if pos + i in state.position_border or pos + i in visited or not not_found:
+                    continue
+                if pos + i in state.position_markings:
+                    not_found = False
+                    temp.append(depth[pos] + 1)
+                    break
+                queue.append(pos + i)
+                depth[pos + i] = depth[pos] + 1
+
+    return sum(temp)
 
 
-def minimal_matching():
+def minimal_matching(state):
     pass
