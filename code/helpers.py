@@ -1,6 +1,6 @@
 from sokobanState import *
 from coordinate import *
-import scipy.optimize
+from scipy.optimize import linear_sum_assignment
 
 
 def parse_level(input):
@@ -68,7 +68,7 @@ def manhattan(state):
     return res
 
 
-def pattern_db(state): # TODO ist jedes mal neu rechen klug?
+def pattern_db(state):  # TODO ist jedes mal neu rechen klug?
     """ flood to all markings; here stop if marking reached """
     temp = []
     for b in state.position_boxes:
@@ -85,6 +85,7 @@ def pattern_db(state): # TODO ist jedes mal neu rechen klug?
                 if pos + i in state.position_markings:
                     not_found = False
                     temp.append(depth[pos] + 1)
+                    print(temp)
                     break
                 queue.append(pos + i)
                 depth[pos + i] = depth[pos] + 1
@@ -92,5 +93,35 @@ def pattern_db(state): # TODO ist jedes mal neu rechen klug?
     return sum(temp)
 
 
-def minimal_matching(state):
-    pass
+def minimal_matching(state):  # TODO ist jedes mal neu rechen klug?
+    """ flood to all markings; an find minimal matching """
+    all_dicts = []
+    for b in state.position_boxes:
+        queue = [b]
+        visited = set()
+        depth = {b: 0}
+        temp = {}
+        while queue:
+            pos = queue.pop(0)
+            if pos in state.position_markings and pos not in visited:  # TODO brauche in besucht und mach besser
+                temp[pos] = depth[pos]
+            visited.add(pos)
+            for i in const.STATES:
+                if pos + i in state.position_markings and pos + i not in visited:
+                    temp[pos + i] = depth[pos] + 1  # break ???
+                if pos + i in state.position_border or pos + i in visited:
+                    continue
+                queue.append(pos + i)
+                depth[pos + i] = depth[pos] + 1
+        all_dicts.append(temp)
+
+    # built array
+    position_markings_list = list(state.position_markings)
+    arr = np.zeros((len(state.position_boxes), len(state.position_markings)))
+    for x in range(len(all_dicts)):  # in boxes
+        for y in range(len(state.position_markings)):
+            arr[x][y] = all_dicts[x][position_markings_list[y]]
+
+    row, col = linear_sum_assignment(arr)
+    tc = arr[row, col].sum()
+    return tc

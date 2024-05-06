@@ -1,4 +1,3 @@
-import math
 from collections import defaultdict
 from queue import PriorityQueue
 
@@ -6,7 +5,7 @@ import helpers as h
 
 
 def search(start):
-    """ Was tut das """  #TODO mode
+    """ Search algorythm with modes for dfs, bfs, and idfs """  #TODO mode
     steps = 0
     current_depth = 0  # for idfs
     max_depth = 1000  # for idfs
@@ -35,14 +34,14 @@ def search(start):
 
 
 def a_star(start):  #TODO heuristic nur bei box verschiebung neu berechnen
-    """ Was tut das """
+    """ A* algorythm with modes for vanilla and memory-bounded """
     steps = 0
     queue = PriorityQueue()
-    queue.put((h.euclidean(start), h.euclidean(start), start))  # change heuristic
+    queue.put((h.minimal_matching(start), h.minimal_matching(start), start))  # change heuristic
     visited = [start]  # make set ?? and empty
     g_score = {start: 0}
     f_score = defaultdict(lambda: float('inf'))
-    f_score[start] = h.euclidean(start)
+    f_score[start] = h.minimal_matching(start)
     parent = {}
 
     while queue:
@@ -58,9 +57,10 @@ def a_star(start):  #TODO heuristic nur bei box verschiebung neu berechnen
                 continue
 
             temp_g_score = g_score[state] + int(i.action.isupper())
-            heuristic = h.euclidean(i) if i.action.isupper() else (f_score[state] - g_score[state])  # calculate if box moved
+            # calculate if box moved
+            heuristic = h.minimal_matching(i) if i.action.isupper() else (f_score[state] - g_score[state])
             temp_f_score = heuristic + temp_g_score
-            if temp_f_score >= f_score[i]:  #brauch ich temp ? wenn nicht, kein default dict
+            if temp_f_score >= f_score[i]:  #TODO brauch ich temp ? wenn nicht, kein default dict
                 continue
             g_score[i] = temp_g_score  # g_score[state] + int(i.action.isupper())
             f_score[i] = temp_f_score  # heuristic + g_score[i]

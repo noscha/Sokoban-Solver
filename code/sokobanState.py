@@ -15,7 +15,8 @@ class SokobanState:
         """ returns possible successor states """
         res = []
         for i in const.STATES:
-            if self.action.isupper() and self.is_trivial_deadlock():  # only when box moved
+            # only when box moved
+            if self.action.isupper() and self.is_trivial_deadlock():
                 continue
             # step with no box in front
             elif self.position_player + i not in self.position_border.union(self.position_boxes):
