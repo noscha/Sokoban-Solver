@@ -16,7 +16,7 @@ class SokobanState:
         res = []
         for i in const.STATES:
             # only when box moved
-            if self.action.isupper() and self.is_trivial_deadlock():
+            if self.action.isupper() and self.is_trivial_deadlock():  # TODO deadlock only with moved box
                 continue
             # step with no box in front
             elif self.position_player + i not in self.position_border.union(self.position_boxes):
@@ -59,7 +59,7 @@ class SokobanState:
                 return not (b in self.position_markings)
 
             # on border
-            else:  #TODO make better
+            else:  # TODO make better
                 no_marking = True
                 i = b
                 while i not in self.position_border:
@@ -78,6 +78,10 @@ class SokobanState:
                 if no_marking:
                     return True
 
+        return False
+
+    def is_advanced_deadlock(self):
+        # TODO freeze and corral
         return False
 
     def __eq__(self, other):

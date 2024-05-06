@@ -1,9 +1,36 @@
 from enum import Enum
 
+import helpers as help
 from coordinate import *
 
+# coordinates
 STATES = [Coordinate((0, 1)), Coordinate((1, 0)), Coordinate((0, -1)), Coordinate((-1, 0))]
 ZERO = Coordinate((0, 0))
+
+
+# search
+class SEARCH(Enum):
+    BFS = "bfs"
+    DFS = "dfs"
+    IDFS = "idfs"
+
+
+# a*
+class A_STAR(Enum):
+    VANILLA = "vanilla"
+    MB = "mb"
+
+
+class HEURISTICS(Enum):
+    EUC = help.euclidean
+    MAN = help.manhattan
+    PDB = help.pattern_db
+    MM = help.minimal_matching
+
+
+class DEADLOCKS(Enum):
+    TRIVIAL = "trivial"
+    ADVANCED = "advanced"
 
 
 def mapping(c):
@@ -15,9 +42,3 @@ def mapping(c):
         return 'u'
     if c == STATES[3]:
         return 'l'
-
-
-class Mode(Enum):
-    BFS = 0  # Mode.BFS -> 0
-    DFS = 1
-    IDFS = 2

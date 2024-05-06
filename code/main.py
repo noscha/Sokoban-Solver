@@ -1,7 +1,6 @@
 import os
-
+import constants as const  # do not remove
 from get_project_root import root_path
-
 import helpers as h
 import search as s
 

@@ -1,6 +1,7 @@
-from sokobanState import *
-from coordinate import *
 from scipy.optimize import linear_sum_assignment
+
+from coordinate import *
+from sokobanState import *
 
 
 def parse_level(input):
@@ -18,7 +19,7 @@ def parse_level(input):
                 levels.append(
                     SokobanState(position_marking, position_border, position_player, frozenset(position_boxes)))
                 position_marking, position_border, position_player, position_boxes = set(), set(), None, set()
-        for c in line:  #TODO mapping in constants
+        for c in line:  # TODO mapping in constants
             if c == '#':
                 position_border.add(Coordinate((x, y)))
             elif c == '.':
@@ -85,7 +86,6 @@ def pattern_db(state):  # TODO ist jedes mal neu rechen klug?
                 if pos + i in state.position_markings:
                     not_found = False
                     temp.append(depth[pos] + 1)
-                    print(temp)
                     break
                 queue.append(pos + i)
                 depth[pos + i] = depth[pos] + 1
