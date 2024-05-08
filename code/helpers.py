@@ -79,14 +79,19 @@ def pattern_db(state):  # TODO ist jedes mal neu rechen klug?
         not_found = True
         while not_found:
             pos = queue.pop(0)
+            # if box stand on marking
+            if pos in state.position_markings and pos not in visited:  # TODO brauche in besucht und mach besser
+                not_found = False
+                temp.append(depth[pos])
+                break
             visited.add(pos)
             for i in const.STATES:
-                if pos + i in state.position_border or pos + i in visited or not not_found:
-                    continue
                 if pos + i in state.position_markings:
                     not_found = False
                     temp.append(depth[pos] + 1)
                     break
+                if pos + i in state.position_border or pos + i in visited or not not_found:
+                    continue
                 queue.append(pos + i)
                 depth[pos + i] = depth[pos] + 1
 
@@ -103,6 +108,7 @@ def minimal_matching(state):  # TODO ist jedes mal neu rechen klug?
         temp = {}
         while queue:
             pos = queue.pop(0)
+            # if box stand on marking
             if pos in state.position_markings and pos not in visited:  # TODO brauche in besucht und mach besser
                 temp[pos] = depth[pos]
             visited.add(pos)

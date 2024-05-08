@@ -30,7 +30,7 @@ class HEURISTICS(Enum):
 
 class DEADLOCKS(Enum):
     TRIVIAL = "trivial"
-    ADVANCED = "advanced"
+    ADVANCED = "iter"
 
 
 def mapping(c):

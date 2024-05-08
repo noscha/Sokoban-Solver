@@ -15,11 +15,8 @@ class SokobanState:
         """ returns possible successor states """
         res = []
         for i in const.STATES:
-            # only when box moved
-            if self.action.isupper() and self.is_trivial_deadlock():  # TODO deadlock only with moved box
-                continue
             # step with no box in front
-            elif self.position_player + i not in self.position_border.union(self.position_boxes):
+            if self.position_player + i not in self.position_border.union(self.position_boxes):
 
                 res.append(SokobanState(self.position_markings, self.position_border,
                                         self.position_player + i, self.position_boxes,
@@ -28,10 +25,11 @@ class SokobanState:
             elif self.position_player + i in self.position_boxes and self.position_player + (
                     i * 2) not in self.position_border.union(self.position_boxes):
 
-                temp = set(self.position_boxes)  # TODO copy or not
+                temp = set(self.position_boxes)
                 temp.remove(self.position_player + i)
+                if self.is_trivial_deadlock(self.position_player + (i * 2)) or self.is_advanced_deadlock(self.position_player + (i * 2), temp): # TODO nach oben mit last moved box damit in visited, maybe?
+                    continue
                 temp.add(self.position_player + (i * 2))
-
                 res.append(SokobanState(self.position_markings, self.position_border,
                                         self.position_player + i, frozenset(temp),
                                         (const.mapping(i)).upper()))
@@ -41,47 +39,59 @@ class SokobanState:
         """ Checks if state is goal"""
         return set(self.position_boxes) == set(self.position_markings)
 
-    def is_trivial_deadlock(self):
+    def is_trivial_deadlock(self, pos):
         """ Detects deadlock wich depend one one box"""
         sum = const.ZERO
         border_count = 0
-        for b in self.position_boxes:
-            for i in const.STATES:
-                if b + i in self.position_border:
-                    sum += i
-                    border_count += 1
-            # path or no border
-            if sum == const.ZERO:
-                continue
 
-            # in corner
-            elif border_count > 2:
-                return not (b in self.position_markings)
+        for i in const.STATES:
+            if pos + i in self.position_border:
+                sum += i
+                border_count += 1
 
-            # on border
-            else:  # TODO make better
-                no_marking = True
-                i = b
-                while i not in self.position_border:
-                    if i in self.position_markings:
-                        no_marking = False
-                        break
-                    i += sum.switch()
-                if not no_marking:
+        # path or no border
+        if sum == const.ZERO:
+            return False
+
+        # in corner
+        elif border_count >= 2:
+            return not (pos in self.position_markings)
+
+        # on border
+        else:  # TODO make better
+            # if one line of box is a marking or a slope, there is no deadlock
+            no_slope_or_no_marking = True
+            i = pos
+            while i not in self.position_border:
+                if i in self.position_markings or i + sum not in self.position_border:
+                    no_slope_or_no_marking = False
                     break
-                i = b
-                while i not in self.position_border:
-                    if i in self.position_markings:
-                        no_marking = False
-                        break
-                    i += (sum.switch() * -1)
-                if no_marking:
-                    return True
+                i += sum.switch()
+            if not no_slope_or_no_marking:
+                return False
+            i = pos
+            while i not in self.position_border:
+                if i in self.position_markings or i + sum not in self.position_border:
+                    no_slope_or_no_marking = False
+                    break
+                i += (sum.switch() * -1)
+
+            if no_slope_or_no_marking:
+                return True
 
         return False
 
-    def is_advanced_deadlock(self):
-        # TODO freeze and corral
+    def is_advanced_deadlock(self, pos, boxes):
+        border_and_box = boxes | self.position_border
+
+        for i in const.STATES:
+            # freeze deadlock
+            if pos not in self.position_markings and pos + i in border_and_box and ((pos + i.switch() in border_and_box and pos + (i + i.switch()) in border_and_box) or (pos + (i.switch() * -1) in border_and_box and pos + (i + (i.switch() * -1)) in border_and_box)):
+                return True
+
+            # check if corral
+            # TODO
+
         return False
 
     def __eq__(self, other):

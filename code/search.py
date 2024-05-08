@@ -14,8 +14,8 @@ def search(start, mode=const.SEARCH.BFS):  # TODO idfs
     visited = [start]  # make set ?? and empty
     parent = {}
     while queue:
-        if current_depth > max_depth:
-            return 0
+        #if current_depth > max_depth:   # for idfs
+            #return -2
         pop = 0 if mode == const.SEARCH.BFS else -1
         state = queue.pop(pop)
         visited.append(state)
@@ -23,8 +23,8 @@ def search(start, mode=const.SEARCH.BFS):  # TODO idfs
         for i in state.successors():
             if i.is_goal():
                 parent[i] = state
-                print(steps)
                 # print(current_depth)  # for idfs
+                print(steps)
                 return help.backtrace(parent, start, i)
             if i in visited:
                 continue
@@ -35,7 +35,7 @@ def search(start, mode=const.SEARCH.BFS):  # TODO idfs
     return -1
 
 
-def a_star(start, mode=const.A_STAR.VANILLA, heuristic=const.HEURISTICS.EUC):
+def a_star(start, mode=const.A_STAR.VANILLA, heuristic=const.HEURISTICS.EUC): # TODO iterrative
     """ A* algorythm with modes for vanilla and memory-bounded """
     steps = 0
     queue = PriorityQueue()
@@ -45,8 +45,11 @@ def a_star(start, mode=const.A_STAR.VANILLA, heuristic=const.HEURISTICS.EUC):
     f_score = defaultdict(lambda: float('inf'))
     f_score[start] = heuristic(start)
     parent = {}
-
-    while queue:
+    n = 0
+    while not queue.empty():
+        n += 1
+        if n == 181:
+            pass
         state = queue.get()[2]
         visited.append(state)
         steps += 1
