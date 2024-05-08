@@ -62,13 +62,13 @@ def a_star(start, mode=const.A_STAR.VANILLA, heuristic=const.HEURISTICS.EUC): # 
                 continue
 
             temp_g_score = g_score[state] + int(i.action.isupper())
-            # calculate if box moved
+            # calculate, if box moved
             h = heuristic(i) if i.action.isupper() else (f_score[state] - g_score[state])
             temp_f_score = h + temp_g_score
-            if temp_f_score >= f_score[i]:  # TODO brauch ich temp ? wenn nicht, kein default dict
+            if temp_f_score >= f_score[i]:
                 continue
-            g_score[i] = temp_g_score  # g_score[state] + int(i.action.isupper())
-            f_score[i] = temp_f_score  # h + g_score[i]
+            g_score[i] = temp_g_score
+            f_score[i] = temp_f_score
             parent[i] = state
             queue.put((f_score[i], h, i))
             visited.append(i)

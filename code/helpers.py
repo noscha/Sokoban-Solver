@@ -31,6 +31,9 @@ def parse_level(input):
             elif c == '*':
                 position_marking.add(Coordinate((x, y)))
                 position_boxes.add(Coordinate((x, y)))
+            elif c == '+':
+                position_marking.add(Coordinate((x, y)))
+                position_player = Coordinate((x, y))
             else:
                 pass
             x += 1

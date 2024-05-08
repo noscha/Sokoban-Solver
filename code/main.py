@@ -7,9 +7,6 @@ from coordinate import *
 
 
 def main():
-    dirname = root_path(ignore_cwd=True)
-    filename = os.path.join(dirname, 'levels/deleteMe.txt')
-    levels = h.parse_level(filename)
 
     dirname = root_path(ignore_cwd=True)
     filename = os.path.join(dirname, 'levels/simple.txt')
@@ -17,7 +14,7 @@ def main():
 
     n = 0
     for i in levels:
-        print(s.search(i), n)
+        print(s.a_star(i), n)
         n += 1
 
 
