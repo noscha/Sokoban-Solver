@@ -5,43 +5,51 @@ import constants as const
 import helpers as help
 
 
-def search(start, mode=const.SEARCH.BFS, max_depth=float('inf')):  # TODO idfs
+def search(start, mode=const.SEARCH.BFS, max_depth=float('inf')):
     """ Search algorythm with modes for dfs, bfs, and idfs """
+    # for idfs
+    current_depth = 0
+
     steps = 0
-    current_depth = 0  # for idfs
     queue = [start]
     visited = [start]  # make set ?? and empty
     parent = {}
     while queue:
-        if current_depth > max_depth:   # for idfs
-            return -2
         pop = 0 if mode == const.SEARCH.BFS else -1
         state = queue.pop(pop)
         visited.append(state)
         steps += 1
+        current_depth += 1
+
+        # for idfs
+        if current_depth >= max_depth:
+            if not queue:
+                return -1, steps
+            state = queue.pop(pop)
+            current_depth -= 1
+
         for i in state.successors():
             if i.is_goal():
                 parent[i] = state
-                print(current_depth)  # for idfs
-                print(steps)
-                return help.backtrace(parent, start, i)
+                return help.backtrace(parent, start, i), steps
             if i in visited:
                 continue
             parent[i] = state
             queue.append(i)
             visited.append(i)
-        current_depth += 1
-    return -1
+    return -1, steps
 
 
 def idfs(start):
+    """ DFS with iterative deepening """
     max_depth = 100
+    steps = 0
     while 1:
         res = search(start, const.SEARCH.IDFS, max_depth)
-        if res != -1:
-            return res
+        steps += res[1]
+        if res[0] != -1:
+            return res[0], steps
         max_depth += 100
-    pass
 
 
 def a_star(start, mode=const.A_STAR.VANILLA, heuristic=const.HEURISTICS.EUC):  # TODO iterrative
@@ -54,19 +62,14 @@ def a_star(start, mode=const.A_STAR.VANILLA, heuristic=const.HEURISTICS.EUC):  #
     f_score = defaultdict(lambda: float('inf'))
     f_score[start] = heuristic(start)
     parent = {}
-    n = 0
     while not queue.empty():
-        n += 1
-        if n == 181:
-            pass
         state = queue.get()[2]
         visited.append(state)
         steps += 1
         for i in state.successors():
             if i.is_goal():
                 parent[i] = state
-                print(steps)
-                return help.backtrace(parent, start, i)
+                return help.backtrace(parent, start, i), steps
             if i in visited:
                 continue
 
@@ -86,6 +89,7 @@ def a_star(start, mode=const.A_STAR.VANILLA, heuristic=const.HEURISTICS.EUC):  #
 
 
 def ia_star(start, heuristic=const.HEURISTICS.EUC):
+    """ A* with iterative deepening """
     max_limit_next, res = heuristic(start), -1
     while res != -1 and max_limit_next != float('inf'):  # res???
         max_limit, max_limit_next = max_limit_next, float('inf')
