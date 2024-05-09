@@ -7,7 +7,7 @@ from sokobanState import *
 def parse_level(input):
     """ Gets levels as txt file and return array of start states"""
     levels = []
-    position_marking, position_border, position_player, position_boxes = set(), set(), None, set()
+    position_marking, position_border, position_player, position_boxes, position_tiles = set(), set(), None, set(), set()
     x, y = 0, 0
 
     f = open(input, 'r')
@@ -17,8 +17,9 @@ def parse_level(input):
             x, y = -1, -1
             if position_player is not None:  # for empty lines
                 levels.append(
-                    SokobanState(position_marking, position_border, position_player, frozenset(position_boxes)))
-                position_marking, position_border, position_player, position_boxes = set(), set(), None, set()
+                    SokobanState(position_marking, position_border, position_player, frozenset(position_boxes), position_tiles))
+                levels[-1].is_trivial_deadlock_2()
+                position_marking, position_border, position_player, position_boxes,position_tiles = set(), set(), None, set(), set()
         for c in line:  # TODO mapping
             if c == '#':
                 position_border.add(Coordinate((x, y)))
@@ -26,6 +27,7 @@ def parse_level(input):
                 position_marking.add(Coordinate((x, y)))
             elif c == '@':
                 position_player = Coordinate((x, y))
+                position_tiles.add(Coordinate((x, y)))
             elif c == '$':
                 position_boxes.add(Coordinate((x, y)))
             elif c == '*':
@@ -34,6 +36,8 @@ def parse_level(input):
             elif c == '+':
                 position_marking.add(Coordinate((x, y)))
                 position_player = Coordinate((x, y))
+            elif c == '-':
+                position_tiles.add(Coordinate((x, y)))
             else:
                 pass
             x += 1

@@ -10,6 +10,7 @@ def main():
     filename = os.path.join(dirname, 'levels/simple.txt')
     levels = h.parse_level(filename)
 
+
     for i in range(len(levels)):
         for m in const.SEARCH:
             print(s.search(levels[i], m), "Level: " + str(i) + " ,Mode: " + str(m))
