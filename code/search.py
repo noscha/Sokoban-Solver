@@ -43,7 +43,7 @@ def idfs(start):
     """ DFS with iterative deepening """
     max_depth = 100
     steps = 0
-    while 1:
+    while 1:  # assume no unsolvable levels
         res = search(start, const.SEARCH.IDFS, max_depth)
         steps += res[1]
         if res[0] != -1:
@@ -51,7 +51,7 @@ def idfs(start):
         max_depth += 100
 
 
-def a_star(start, mode=const.A_STAR.VANILLA, heuristic=const.HEURISTICS.EUC, max_limit=float('inf'), max_limit_next=float('inf')):  # TODO iterrative
+def a_star(start, mode=const.A_STAR.VANILLA, heuristic=const.HEURISTICS.EUC, max_limit=float('inf')):
     """ A* algorythm with modes for vanilla and memory-bounded """
     steps = 0
     queue = PriorityQueue()
@@ -68,14 +68,12 @@ def a_star(start, mode=const.A_STAR.VANILLA, heuristic=const.HEURISTICS.EUC, max
 
         # for ida
         if g_score[state] > max_limit:
-            if g_score[state] < max_limit_next:
-                max_limit_next = g_score[state]
-                continue
+            return -1, steps, g_score[state]
 
         for i in state.successors():
             if i.is_goal():
                 parent[i] = state
-                return help.backtrace(parent, start, i), steps, -1  # TODO -1 if ida
+                return (help.backtrace(parent, start, i), steps, -1) if mode == const.A_STAR.IDA else (help.backtrace(parent, start, i), steps)
             if i in visited:
                 continue
             temp_g_score = g_score[state] + int(i.action.isupper())
@@ -90,16 +88,16 @@ def a_star(start, mode=const.A_STAR.VANILLA, heuristic=const.HEURISTICS.EUC, max
             queue.put((f_score[i], h, i))
             visited.append(i)
 
-    return -1, steps, max_limit_next
+    return -1, steps, float('inf')
 
 
-def ida_star(start, heuristic=const.HEURISTICS.EUC): # TODO implement
+def ida_star(start, heuristic=const.HEURISTICS.EUC):
     """ A* with iterative deepening, with visited """
-    max_limit_next, res = heuristic(start), -1
+    max_limit = heuristic(start)
     steps = 0
 
-    while res == -1 and max_limit_next != float('inf'):
-        max_limit, max_limit_next = max_limit_next, float('inf')
-        res, temp_steps, max_limit_next = a_star(start, const.A_STAR.IDA, heuristic, max_limit)
+    while 1:  # assume no unsolvable levels
+        res, temp_steps, max_limit = a_star(start, const.A_STAR.IDA, heuristic, max_limit)
         steps += temp_steps
-    return res, steps
+        if res != -1:
+            return res, steps
