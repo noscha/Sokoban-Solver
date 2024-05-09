@@ -12,12 +12,12 @@ def search(start, mode=const.SEARCH.BFS, max_depth=float('inf')):
 
     steps = 0
     queue = [start]
-    visited = [start]  # make set ?? and empty
+    visited = set()
     parent = {}
     while queue:
         pop = 0 if mode == const.SEARCH.BFS else -1
         state = queue.pop(pop)
-        visited.append(state)
+        visited.add(state)
         steps += 1
         current_depth += 1
 
@@ -34,7 +34,7 @@ def search(start, mode=const.SEARCH.BFS, max_depth=float('inf')):
                 continue
             parent[i] = state
             queue.append(i)
-            visited.append(i)
+            visited.add(i)
 
     return -1, steps
 
@@ -56,14 +56,14 @@ def a_star(start, heuristic=const.heu_mapping(const.HEURISTICS.EUC), mode=const.
     steps = 0
     queue = PriorityQueue()
     queue.put((heuristic(start), heuristic(start), start))
-    visited = [start]  # make set ?? and empty
+    visited = set()
     g_score = {start: 0}
     f_score = defaultdict(lambda: float('inf'))
     f_score[start] = heuristic(start)
     parent = {}
     while not queue.empty():
         state = queue.get()[2]
-        visited.append(state)
+        visited.add(state)
         steps += 1
 
         # for ida
@@ -86,7 +86,7 @@ def a_star(start, heuristic=const.heu_mapping(const.HEURISTICS.EUC), mode=const.
             f_score[i] = temp_f_score
             parent[i] = state
             queue.put((f_score[i], h, i))
-            visited.append(i)
+            visited.add(i)
 
     return -1, steps, float('inf')
 
