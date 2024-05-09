@@ -23,10 +23,8 @@ def search(start, mode=const.SEARCH.BFS, max_depth=float('inf')):
 
         # for idfs
         if current_depth >= max_depth:
-            if not queue:
-                return -1, steps
-            state = queue.pop(pop)
             current_depth -= 1
+            continue
 
         for i in state.successors():
             if i.is_goal():
@@ -37,6 +35,7 @@ def search(start, mode=const.SEARCH.BFS, max_depth=float('inf')):
             parent[i] = state
             queue.append(i)
             visited.append(i)
+
     return -1, steps
 
 
@@ -52,7 +51,7 @@ def idfs(start):
         max_depth += 100
 
 
-def a_star(start, mode=const.A_STAR.VANILLA, heuristic=const.HEURISTICS.EUC):  # TODO iterrative
+def a_star(start, mode=const.A_STAR.VANILLA, heuristic=const.HEURISTICS.EUC, max_limit=float('inf'), max_limit_next=float('inf')):  # TODO iterrative
     """ A* algorythm with modes for vanilla and memory-bounded """
     steps = 0
     queue = PriorityQueue()
@@ -66,13 +65,19 @@ def a_star(start, mode=const.A_STAR.VANILLA, heuristic=const.HEURISTICS.EUC):  #
         state = queue.get()[2]
         visited.append(state)
         steps += 1
+
+        # for ida
+        if g_score[state] > max_limit:
+            if g_score[state] < max_limit_next:
+                max_limit_next = g_score[state]
+                continue
+
         for i in state.successors():
             if i.is_goal():
                 parent[i] = state
-                return help.backtrace(parent, start, i), steps
+                return help.backtrace(parent, start, i), steps, -1  # TODO -1 if ida
             if i in visited:
                 continue
-
             temp_g_score = g_score[state] + int(i.action.isupper())
             # calculate, if box moved
             h = heuristic(i) if i.action.isupper() else (f_score[state] - g_score[state])
@@ -85,13 +90,16 @@ def a_star(start, mode=const.A_STAR.VANILLA, heuristic=const.HEURISTICS.EUC):  #
             queue.put((f_score[i], h, i))
             visited.append(i)
 
-    return -1
+    return -1, steps, max_limit_next
 
 
-def ia_star(start, heuristic=const.HEURISTICS.EUC):
-    """ A* with iterative deepening """
+def ida_star(start, heuristic=const.HEURISTICS.EUC): # TODO implement
+    """ A* with iterative deepening, with visited """
     max_limit_next, res = heuristic(start), -1
-    while res != -1 and max_limit_next != float('inf'):  # res???
+    steps = 0
+
+    while res == -1 and max_limit_next != float('inf'):
         max_limit, max_limit_next = max_limit_next, float('inf')
-        res, max_limit_next = a_star(start, const.A_STAR.IA, heuristic)
-    return res
+        res, temp_steps, max_limit_next = a_star(start, const.A_STAR.IDA, heuristic, max_limit)
+        steps += temp_steps
+    return res, steps

@@ -13,7 +13,9 @@ def main():
     levels = h.parse_level(filename)
 
 
-    print(s.idfs(levels[0]))
+    print(s.ida_star(levels[0]))
+
+    # TODO Pipeline
 
 
 if __name__ == "__main__":

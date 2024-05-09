@@ -18,7 +18,7 @@ class SEARCH(Enum):
 # a*
 class A_STAR(Enum):
     VANILLA = "vanilla"
-    IA = "ia"
+    IDA = "ida"
 
 
 class HEURISTICS(Enum):
