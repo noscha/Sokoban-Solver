@@ -5,17 +5,16 @@ import constants as const
 import helpers as help
 
 
-def search(start, mode=const.SEARCH.BFS):  # TODO idfs
+def search(start, mode=const.SEARCH.BFS, max_depth=float('inf')):  # TODO idfs
     """ Search algorythm with modes for dfs, bfs, and idfs """
     steps = 0
     current_depth = 0  # for idfs
-    max_depth = 1000  # for idfs
     queue = [start]
     visited = [start]  # make set ?? and empty
     parent = {}
     while queue:
-        #if current_depth > max_depth:   # for idfs
-            #return -2
+        if current_depth > max_depth:   # for idfs
+            return -2
         pop = 0 if mode == const.SEARCH.BFS else -1
         state = queue.pop(pop)
         visited.append(state)
@@ -23,7 +22,7 @@ def search(start, mode=const.SEARCH.BFS):  # TODO idfs
         for i in state.successors():
             if i.is_goal():
                 parent[i] = state
-                # print(current_depth)  # for idfs
+                print(current_depth)  # for idfs
                 print(steps)
                 return help.backtrace(parent, start, i)
             if i in visited:
@@ -35,11 +34,21 @@ def search(start, mode=const.SEARCH.BFS):  # TODO idfs
     return -1
 
 
-def a_star(start, mode=const.A_STAR.VANILLA, heuristic=const.HEURISTICS.EUC): # TODO iterrative
+def idfs(start):
+    max_depth = 100
+    while 1:
+        res = search(start, const.SEARCH.IDFS, max_depth)
+        if res != -1:
+            return res
+        max_depth += 100
+    pass
+
+
+def a_star(start, mode=const.A_STAR.VANILLA, heuristic=const.HEURISTICS.EUC):  # TODO iterrative
     """ A* algorythm with modes for vanilla and memory-bounded """
     steps = 0
     queue = PriorityQueue()
-    queue.put((heuristic(start), heuristic(start), start))  # change heuristic
+    queue.put((heuristic(start), heuristic(start), start))
     visited = [start]  # make set ?? and empty
     g_score = {start: 0}
     f_score = defaultdict(lambda: float('inf'))
@@ -74,3 +83,11 @@ def a_star(start, mode=const.A_STAR.VANILLA, heuristic=const.HEURISTICS.EUC): # 
             visited.append(i)
 
     return -1
+
+
+def ia_star(start, heuristic=const.HEURISTICS.EUC):
+    max_limit_next, res = heuristic(start), -1
+    while res != -1 and max_limit_next != float('inf'):  # res???
+        max_limit, max_limit_next = max_limit_next, float('inf')
+        res, max_limit_next = a_star(start, const.A_STAR.IA, heuristic)
+    return res
