@@ -44,14 +44,14 @@ def idfs(start):
     max_depth = 100
     steps = 0
     while 1:  # assume no unsolvable levels
-        res = search(start, const.SEARCH.IDFS, max_depth)
+        res = search(start, const.SEARCH.DFS, max_depth)
         steps += res[1]
         if res[0] != -1:
             return res[0], steps
         max_depth += 100
 
 
-def a_star(start, mode=const.A_STAR.VANILLA, heuristic=const.HEURISTICS.EUC, max_limit=float('inf')):
+def a_star(start, heuristic=const.heu_mapping(const.HEURISTICS.EUC), mode=const.A_STAR.VANILLA, max_limit=float('inf')):
     """ A* algorythm with modes for vanilla and memory-bounded """
     steps = 0
     queue = PriorityQueue()
@@ -91,13 +91,13 @@ def a_star(start, mode=const.A_STAR.VANILLA, heuristic=const.HEURISTICS.EUC, max
     return -1, steps, float('inf')
 
 
-def ida_star(start, heuristic=const.HEURISTICS.EUC):
+def ida_star(start, heuristic=const.heu_mapping(const.HEURISTICS.EUC)):
     """ A* with iterative deepening, with visited """
     max_limit = heuristic(start)
     steps = 0
 
     while 1:  # assume no unsolvable levels
-        res, temp_steps, max_limit = a_star(start, const.A_STAR.IDA, heuristic, max_limit)
+        res, temp_steps, max_limit = a_star(start, heuristic, const.A_STAR.IDA, max_limit)
         steps += temp_steps
         if res != -1:
             return res, steps

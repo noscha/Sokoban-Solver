@@ -12,7 +12,6 @@ ZERO = Coordinate((0, 0))
 class SEARCH(Enum):
     BFS = "bfs"
     DFS = "dfs"
-    IDFS = "idfs"
 
 
 # a*
@@ -22,23 +21,29 @@ class A_STAR(Enum):
 
 
 class HEURISTICS(Enum):
-    EUC = help.euclidean
-    MAN = help.manhattan
-    PDB = help.pattern_db
-    MM = help.minimal_matching
+    EUC = "euc"
+    MAN = "man"
+    PDB = "pdb"
+    MM = "mm"
 
 
-class DEADLOCKS(Enum):
-    TRIVIAL = "trivial"
-    ADVANCED = "iter"
+def heu_mapping(heu):
+    if heu == HEURISTICS.EUC:
+        return help.euclidean
+    elif heu == HEURISTICS.MAN:
+        return help.manhattan
+    elif heu == HEURISTICS.PDB:
+        return help.pattern_db
+    elif heu == HEURISTICS.MM:
+        return help.minimal_matching
 
 
 def mapping(c):
     if c == STATES[0]:
         return 'd'
-    if c == STATES[1]:
+    elif c == STATES[1]:
         return 'r'
-    if c == STATES[2]:
+    elif c == STATES[2]:
         return 'u'
-    if c == STATES[3]:
+    elif c == STATES[3]:
         return 'l'

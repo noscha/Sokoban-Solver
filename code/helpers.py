@@ -19,7 +19,7 @@ def parse_level(input):
                 levels.append(
                     SokobanState(position_marking, position_border, position_player, frozenset(position_boxes)))
                 position_marking, position_border, position_player, position_boxes = set(), set(), None, set()
-        for c in line:  # TODO mapping in constants
+        for c in line:  # TODO mapping
             if c == '#':
                 position_border.add(Coordinate((x, y)))
             elif c == '.':
