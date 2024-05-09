@@ -40,49 +40,8 @@ class SokobanState:
         """ Checks if state is goal"""
         return set(self.position_boxes) == set(self.position_markings)
 
-    def is_trivial_deadlock(self, pos):
-        """ Detects deadlock wich depend one one box"""
-        sum = const.ZERO
-        border_count = 0
-
-        for i in const.STATES:
-            if pos + i in self.position_border:
-                sum += i
-                border_count += 1
-
-        # path or no border
-        if sum == const.ZERO:
-            return False
-
-        # in corner
-        elif border_count >= 2:
-            return not (pos in self.position_markings)
-
-        # on border
-        else:  # TODO make better
-            # if one line of box is a marking or a slope, there is no deadlock
-            no_slope_or_no_marking = True
-            i = pos
-            while i not in self.position_border:
-                if i in self.position_markings or i + sum not in self.position_border:
-                    no_slope_or_no_marking = False
-                    break
-                i += sum.switch()
-            if not no_slope_or_no_marking:
-                return False
-            i = pos
-            while i not in self.position_border:
-                if i in self.position_markings or i + sum not in self.position_border:
-                    no_slope_or_no_marking = False
-                    break
-                i += (sum.switch() * -1)
-
-            if no_slope_or_no_marking:
-                return True
-
-        return False
-
-    def is_trivial_deadlock_2(self):
+    def is_trivial_deadlock(self):
+        """  """
         deadlock = set()
         for t in self.position_tiles:
 

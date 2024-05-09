@@ -18,7 +18,7 @@ def parse_level(input):
             if position_player is not None:  # for empty lines
                 levels.append(
                     SokobanState(position_marking, position_border, position_player, frozenset(position_boxes), position_tiles))
-                levels[-1].is_trivial_deadlock_2()
+                levels[-1].is_trivial_deadlock()
                 position_marking, position_border, position_player, position_boxes,position_tiles = set(), set(), None, set(), set()
         for c in line:  # TODO mapping
             if c == '#':
@@ -36,7 +36,7 @@ def parse_level(input):
             elif c == '+':
                 position_marking.add(Coordinate((x, y)))
                 position_player = Coordinate((x, y))
-            elif c == '-':
+            elif c != '\n':
                 position_tiles.add(Coordinate((x, y)))
             else:
                 pass
