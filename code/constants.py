@@ -1,5 +1,4 @@
 from enum import Enum
-
 import helpers as help
 from coordinate import *
 

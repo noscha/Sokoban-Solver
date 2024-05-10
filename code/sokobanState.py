@@ -1,4 +1,5 @@
 import constants as const
+#import search as s
 
 
 class SokobanState:
@@ -88,6 +89,10 @@ class SokobanState:
         self.position_tiles = deadlock
 
     def is_advanced_deadlock(self, pos, boxes):
+
+        if len(self.position_boxes) == 1:
+            return False
+
         border_and_box = boxes | self.position_border
 
         for i in const.STATES:
@@ -97,10 +102,12 @@ class SokobanState:
                     pos + (i.switch() * -1) in border_and_box and pos + (i + (i.switch() * -1)) in border_and_box)):
                 return True
 
-            # check if corral
-            # TODO
-
-        return False
+        # check if corral
+        # TODO
+        #sS = SokobanState(self.position_markings, self.position_markings, self.position_border, self.position_player, frozenset(pos), self.position_tiles)
+        #if s.a_star(sS, const.heu_mapping(const.HEURISTICS.MAN))[0] == -1:
+        #    return True
+        #return False
 
     def __eq__(self, other):
         return (self.position_player, self.position_boxes) == (other.position_player, other.position_boxes)
