@@ -4,7 +4,6 @@ from queue import PriorityQueue
 
 import constants as const
 import helpers as help
-import time
 
 
 def search(start, mode=const.SEARCH.BFS, max_depth=float('inf')):
@@ -33,14 +32,15 @@ def search(start, mode=const.SEARCH.BFS, max_depth=float('inf')):
         for i in state.successors():
             if i.is_goal():
                 parent[i] = state
-                return help.backtrace(parent, start, i), steps, time.process_time() - t
+                path = help.backtrace(parent, start, i)
+                return steps, steps ** (1 / len(path)), time.process_time() - t, path
             if i in visited:
                 continue
             parent[i] = state
             queue.append(i)
             visited.add(i)
 
-    return -1, steps, -1
+    return steps, 0, time.process_time() - t, -1
 
 
 def idfs(start):
@@ -50,9 +50,10 @@ def idfs(start):
     steps = 0
     while 1:  # assume no unsolvable levels
         res = search(start, const.SEARCH.DFS, max_depth)
-        steps += res[1]
-        if res[0] != -1:
-            return res[0], steps, time.process_time() - t
+        steps += res[0]
+        path = res[3]
+        if path != -1:
+            return steps, steps ** (1 / len(path)), time.process_time() - t, path
         max_depth += 100
 
 
@@ -74,12 +75,15 @@ def a_star(start, heuristic=const.heu_mapping(const.HEURISTICS.EUC), mode=const.
 
         # for ida
         if g_score[state] > max_limit:
-            return -1, steps, g_score[state], -1
+            return steps, 0, time.process_time() - t, g_score[state], -1
 
         for i in state.successors():
             if i.is_goal():
                 parent[i] = state
-                return (help.backtrace(parent, start, i), steps, -1, -1) if mode == const.A_STAR.IDA else (help.backtrace(parent, start, i), steps, time.process_time() - t)
+                path = help.backtrace(parent, start, i)
+                return (steps, 0, time.process_time() - t, float('inf'),
+                        help.backtrace(parent, start, i)) if mode == const.A_STAR.IDA else (
+                    steps, steps ** (1 / len(path)), time.process_time() - t, path)
             if i in visited:
                 continue
             temp_g_score = g_score[state] + int(i.action.isupper())
@@ -94,7 +98,7 @@ def a_star(start, heuristic=const.heu_mapping(const.HEURISTICS.EUC), mode=const.
             queue.put((f_score[i], h, i))
             visited.add(i)
 
-    return -1, steps, float('inf'), -1
+    return steps, 0, time.process_time() - t, float('inf'), -1
 
 
 def ida_star(start, heuristic=const.heu_mapping(const.HEURISTICS.EUC)):
@@ -104,7 +108,7 @@ def ida_star(start, heuristic=const.heu_mapping(const.HEURISTICS.EUC)):
     steps = 0
 
     while 1:  # assume no unsolvable levels
-        res, temp_steps, max_limit, trash = a_star(start, heuristic, const.A_STAR.IDA, max_limit)
+        temp_steps, temp_b, temp_time, max_limit, path = a_star(start, heuristic, const.A_STAR.IDA, max_limit)
         steps += temp_steps
-        if res != -1:
-            return res, steps, time.process_time() - t
+        if path != -1:
+            return steps, steps ** (1 / len(path)), time.process_time() - t, path

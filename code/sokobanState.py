@@ -1,5 +1,4 @@
 import constants as const
-#import search as s
 
 
 class SokobanState:
@@ -29,7 +28,9 @@ class SokobanState:
 
                 temp = set(self.position_boxes)
                 temp.remove(self.position_player + i)
-                if self.position_player + (i * 2) in self.position_tiles or self.is_advanced_deadlock(self.position_player + (i * 2), temp):  # TODO nach oben mit last moved box damit in visited, maybe?
+                if self.position_player + (i * 2) in self.position_tiles or self.is_advanced_deadlock(
+                        self.position_player + (i * 2),
+                        temp):
                     continue
                 temp.add(self.position_player + (i * 2))
                 res.append(SokobanState(self.position_markings, self.position_border,
@@ -64,7 +65,7 @@ class SokobanState:
                 continue
 
             # on border
-            else:  # TODO make better
+            else:
                 # if one line of box is a marking or a slope, there is no deadlock
                 no_slope_or_no_marking = True
                 i = t
@@ -104,10 +105,6 @@ class SokobanState:
 
         # check if corral
         # TODO
-        #sS = SokobanState(self.position_markings, self.position_markings, self.position_border, self.position_player, frozenset(pos), self.position_tiles)
-        #if s.a_star(sS, const.heu_mapping(const.HEURISTICS.MAN))[0] == -1:
-        #    return True
-        #return False
 
     def __eq__(self, other):
         return (self.position_player, self.position_boxes) == (other.position_player, other.position_boxes)

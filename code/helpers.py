@@ -1,5 +1,6 @@
 from scipy.optimize import linear_sum_assignment
 
+import constants as const
 from coordinate import *
 from sokobanState import *
 
@@ -17,10 +18,11 @@ def parse_level(input):
             x, y = -1, -1
             if position_player is not None:  # for empty lines
                 levels.append(
-                    SokobanState(position_marking, position_border, position_player, frozenset(position_boxes), position_tiles))
+                    SokobanState(position_marking, position_border, position_player, frozenset(position_boxes),
+                                 position_tiles))
                 levels[-1].is_trivial_deadlock()
-                position_marking, position_border, position_player, position_boxes,position_tiles = set(), set(), None, set(), set()
-        for c in line:  # TODO mapping
+                position_marking, position_border, position_player, position_boxes, position_tiles = set(), set(), None, set(), set()
+        for c in line:
             if c == '#':
                 position_border.add(Coordinate((x, y)))
             elif c == '.':
@@ -93,7 +95,7 @@ def pattern_db(state):  # TODO ist jedes mal neu rechen klug?
                 break
             visited.add(pos)
             for i in const.STATES:
-                if pos + i in state.position_markings: # TODO need this ?
+                if pos + i in state.position_markings:  # TODO need this ?
                     not_found = False
                     temp.append(depth[pos] + 1)
                     break
