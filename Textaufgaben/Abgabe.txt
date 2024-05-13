@@ -1,0 +1,17 @@
+1)
+Zustandsmenge:  Alle Zustände wie die Kisten und der Spieler auf dem Feld angeordnet sein können.
+Aktionen:       Spieler bewegt sich auf ein freies Feld oder ein Kisten-Feld (wenn hinter der Kiste das Feld frei ist), wobei die Kiste auf das dahinter liegende Feld geschoben wird.
+Zielzustände:   Alle Kisten sind auf den markierten Feldern und der Spieler auf einem beliebigen Feld
+
+2)
+BFS lohnt sich bei kurzen Lösungspfaden mit nicht allzu großer Zustandsmenge
+DFS lohnt sich, wenn alle Boxen relativ in der Richtung liegen, in die der Algo zuerst erkundet.
+IDFS findet ein Kompromiss zwischen beidem.
+
+3)
+a)
+Es lohnt sich nicht, davon Anfang an feststeht, welche Felder zu trivialen Deadlocks führen.
+Zieht man die Boxposition mit ein und schaut bei jedem Zustand nach Deadlocks, kann man den gleichen Deadlock für unterschiedliche Boxen berechnen, was nicht effizient ist.
+
+c)
+Die Performance ist erheblich besser, da oftmals bis zu Hälfte aller Felder wegfallen.
