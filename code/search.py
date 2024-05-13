@@ -57,7 +57,7 @@ def idfs(start):
         max_depth += 100
 
 
-def a_star(start, heuristic=const.heu_mapping(const.HEURISTICS.EUC), mode=const.A_STAR.VANILLA, max_limit=float('inf')):
+def a_star(start, heuristic=const.heu_mapping(const.HEURISTICS.EUC)):
     """ A* algorythm with modes for vanilla and memory-bounded """
     t = time.process_time()
     steps = 0
@@ -73,17 +73,11 @@ def a_star(start, heuristic=const.heu_mapping(const.HEURISTICS.EUC), mode=const.
         visited.add(state)
         steps += 1
 
-        # for ida
-        if g_score[state] > max_limit:
-            return steps, 0, time.process_time() - t, g_score[state], -1
-
         for i in state.successors():
             if i.is_goal():
                 parent[i] = state
                 path = help.backtrace(parent, start, i)
-                return (steps, 0, time.process_time() - t, float('inf'),
-                        help.backtrace(parent, start, i)) if mode == const.A_STAR.IDA else (
-                    steps, steps ** (1 / len(path)), time.process_time() - t, path)
+                return steps, steps ** (1 / len(path)), time.process_time() - t, path
             if i in visited:
                 continue
             temp_g_score = g_score[state] + int(i.action.isupper())
@@ -102,13 +96,45 @@ def a_star(start, heuristic=const.heu_mapping(const.HEURISTICS.EUC), mode=const.
 
 
 def ida_star(start, heuristic=const.heu_mapping(const.HEURISTICS.EUC)):
-    """ A* with iterative deepening, with visited """
-    t = time.process_time()
-    max_limit = heuristic(start)
-    steps = 0
+    """ A* with iterative deepening """
 
-    while 1:  # assume no unsolvable levels
-        temp_steps, temp_b, temp_time, max_limit, path = a_star(start, heuristic, const.A_STAR.IDA, max_limit)
-        steps += temp_steps
-        if path != -1:
-            return steps, steps ** (1 / len(path)), time.process_time() - t, path
+    if start.is_goal():
+        return 0, 0, 0, "finished"
+
+    t = time.process_time()
+    steps = 0
+    next_limit = heuristic(start)
+
+    while next_limit != float('inf'):
+        limit = next_limit
+        next_limit = float('inf')
+        queue = [start]
+        visited = set()
+        parents = {}
+        g_score = {start: 0}
+
+        while queue:
+            state = queue.pop(-1)
+            visited.add(state)
+            steps += 1
+
+            for next_state in state.successors():
+                if next_state.is_goal():
+                    parents[next_state] = state
+                    path = help.backtrace(parents, start, next_state)
+                    return steps, steps ** (1 / len(path)), time.process_time() - t, path
+
+                if next_state in visited:
+                    continue
+
+                predecessor = state
+                g_score[next_state] = g_score[predecessor] + int(next_state.action.isupper())
+                f_score = heuristic(next_state) + g_score[next_state]
+                if f_score > limit:
+                    if f_score < next_limit:
+                        next_limit = f_score
+                else:
+                    parents[next_state] = state
+                    queue.append(next_state)
+
+    return steps, 0, time.process_time() - t, -1
