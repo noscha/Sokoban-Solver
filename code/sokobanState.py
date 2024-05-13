@@ -43,7 +43,6 @@ class SokobanState:
         return set(self.position_boxes) == set(self.position_markings)
 
     def is_trivial_deadlock(self):
-        """  """
         deadlock = set()
         for t in self.position_tiles:
 
@@ -102,9 +101,6 @@ class SokobanState:
                     (pos + i.switch() in border_and_box and pos + (i + i.switch()) in border_and_box) or (
                     pos + (i.switch() * -1) in border_and_box and pos + (i + (i.switch() * -1)) in border_and_box)):
                 return True
-
-        # check if corral
-        # TODO
 
     def __eq__(self, other):
         return (self.position_player, self.position_boxes) == (other.position_player, other.position_boxes)

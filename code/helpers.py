@@ -78,7 +78,7 @@ def manhattan(state):
     return res
 
 
-def pattern_db(state):  # TODO ist jedes mal neu rechen klug?
+def pattern_db(state):
     """ flood to all markings; here stop if marking reached """
     temp = []
     for b in state.position_boxes:
@@ -95,7 +95,7 @@ def pattern_db(state):  # TODO ist jedes mal neu rechen klug?
                 break
             visited.add(pos)
             for i in const.STATES:
-                if pos + i in state.position_markings:  # TODO need this ?
+                if pos + i in state.position_markings:
                     not_found = False
                     temp.append(depth[pos] + 1)
                     break
@@ -107,7 +107,7 @@ def pattern_db(state):  # TODO ist jedes mal neu rechen klug?
     return sum(temp)
 
 
-def minimal_matching(state):  # TODO ist jedes mal neu rechen klug?
+def minimal_matching(state):
     """ flood to all markings; an find minimal matching """
     all_dicts = []
     for b in state.position_boxes:
@@ -122,8 +122,8 @@ def minimal_matching(state):  # TODO ist jedes mal neu rechen klug?
                 temp[pos] = depth[pos]
             visited.add(pos)
             for i in const.STATES:
-                if pos + i in state.position_markings and pos + i not in visited:  # TODO need this ?
-                    temp[pos + i] = depth[pos] + 1  # break ???
+                if pos + i in state.position_markings and pos + i not in visited:
+                    temp[pos + i] = depth[pos] + 1
                 if pos + i in state.position_border or pos + i in visited:
                     continue
                 queue.append(pos + i)
