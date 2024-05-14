@@ -127,8 +127,7 @@ def ida_star(start, heuristic=const.heu_mapping(const.HEURISTICS.EUC)):
                 if next_state in visited:
                     continue
 
-                predecessor = state
-                g_score[next_state] = g_score[predecessor] + int(next_state.action.isupper())
+                g_score[next_state] = g_score[state] + int(next_state.action.isupper())
                 f_score = heuristic(next_state) + g_score[next_state]
                 if f_score > limit:
                     if f_score < next_limit:

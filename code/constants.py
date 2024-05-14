@@ -14,12 +14,6 @@ class SEARCH(Enum):
     DFS = "dfs"
 
 
-# a*
-class A_STAR(Enum):
-    VANILLA = "vanilla"
-    IDA = "ida"
-
-
 class HEURISTICS(Enum):
     EUC = "euc"
     MAN = "man"
