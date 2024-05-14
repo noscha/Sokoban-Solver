@@ -5,12 +5,13 @@ Zielzustände:   Alle Kisten sind auf den markierten Feldern und der Spieler auf
 
 2)
 BFS lohnt sich bei kurzen Lösungspfaden mit nicht allzu großer Zustandsmenge
-DFS lohnt sich, wenn alle Boxen relativ in der Richtung liegen, in die der Algo zuerst erkundet.
-IDFS findet ein Kompromiss zwischen beidem.
+DFS lohnt sich, wenn alle Boxen und Ziele relativ in der Richtung liegen, in die der Algo zuerst erkundet, da dann selten die Richtung für längere Zeit geändert werden muss.
+IDFS findet ein Kompromiss zwischen beidem. Es priorisiert Lösungen bei denen alles in einer ähnlichen Richtung liegt genauso wie kompakte Level.
 
 3)
 a)
-Es lohnt sich nicht, davon Anfang an feststeht, welche Felder zu trivialen Deadlocks führen.
+Es lohnt sich nicht, da von Anfang an feststeht, welche Felder zu trivialen Deadlocks führen.
+Dementsprechend ist es nicht nötig bei jeder Boxverschiebung die trivialen Deadlocks neu zu berechnen, da diese nicht von den Boxen abhängen.
 Zieht man die Boxposition mit ein und schaut bei jedem Zustand nach Deadlocks, kann man den gleichen Deadlock für unterschiedliche Boxen berechnen, was nicht effizient ist.
 
 c)

@@ -96,7 +96,7 @@ def a_star(start, heuristic=const.heu_mapping(const.HEURISTICS.EUC)):
 
 
 def ida_star(start, heuristic=const.heu_mapping(const.HEURISTICS.EUC)):
-    """ A* with iterative deepening """
+    """ A* with iterative deepening with visited set """
 
     if start.is_goal():
         return 0, 0, 0, "finished"
